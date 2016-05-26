@@ -103,7 +103,7 @@ log.init(logParams);
 
 ## Parameters: 
 -  	`consoleOutput` : `boolean` : Wether the logging will be printed on the console output as well, or not
--  	`consoleOutputLevel` : `int` or `string` or `array`  : Specify the console output log level.
+-  	`consoleOutputLevel` : `int` or `string` or `array`  : Filters what is printed to the console with respect to log levels (specify the console output log level).
 -  	using int: from 0 to 7 
 -  	using string: any valid log level (DEBUG, INFO, ERROR,....)
 -  	using array: to allow multiple log levels eg: ['DEBUG','ERROR','WARNING']
