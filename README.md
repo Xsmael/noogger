@@ -2,8 +2,10 @@
 
 A simple logging module for node.js
 
+[![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mkozjak/node-telnet-client/blob/master/LICENSE)
 
-[![Build Status](https://travis-ci.org/websockets/ws.svg?branch=master)](https://travis-ci.org/websockets/ws)
+[![NPM](https://nodei.co/npm/node-logger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/telnet-client/)
+
 
 `noogger` is a simple to use logger module that helps you to write logs files in a clean an organized way.
 No need to implement the logging mechanism for your node applications anymore.
