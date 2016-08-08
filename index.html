@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Node-logger : A simple and lightweight nodejs logging library.">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Node-logger</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/Xsmael/node-logger">View on GitHub</a>
+
+          <h1 id="project_title">Node-logger</h1>
+          <h2 id="project_tagline">A simple and lightweight nodejs logging library.</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/Xsmael/node-logger/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Xsmael/node-logger/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><a href="https://github.com/mkozjak/node-telnet-client/blob/master/LICENSE"><img src="https://img.shields.io/github/license/mashape/apistatus.svg" alt="GitHub license"></a></p>
+
+<p><a href="https://nodei.co/npm/noogger/"><img src="https://nodei.co/npm/noogger.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p>
+
+<h1>
+<a id="node-logger-noogger" class="anchor" href="#node-logger-noogger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>node-logger (noogger)</h1>
+
+<p>A simple logging module for node.js</p>
+
+<p><code>noogger</code> is a simple to use logger module that helps you to write logs files in a clean an organized way.
+No need to implement the logging mechanism for your node applications anymore.</p>
+
+<h3>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Installing</h3>
+
+<p>Install it locally in your project or globally:</p>
+
+<pre><code>npm install noogger
+npm install -g noogger
+</code></pre>
+
+<h2>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li> write daily log file, handy for servers, or applications that run continously</li>
+<li> Forwards logging data to the console output if needed (optional)</li>
+<li> En/Disable Console output according to log</li>
+<li> pretty colors in console output</li>
+<li> Supported log levels (as per cisco and many other manufacturer standards):
+EMERGENCY(0)
+ALERT(1)
+CRITICAL(2)
+ERROR(3)
+WARNING(4)
+NOTICE(5)
+INFO(6)
+DEBUG(7)</li>
+<li> Customize date-time format for log lines and for log file name</li>
+</ul>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Usage</h2>
+
+<h4>
+<a id="basic-with-default-parameters" class="anchor" href="#basic-with-default-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Basic (with default parameters)</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> log <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>noogger<span class="pl-pds">'</span></span>);
+<span class="pl-k">...</span>
+<span class="pl-k">...</span>
+<span class="pl-k">...</span>
+<span class="pl-smi">log</span>.<span class="pl-en">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World! Booting..<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">warning</span>(<span class="pl-s"><span class="pl-pds">"</span>something is wrong<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">error</span>(<span class="pl-s"><span class="pl-pds">"</span>Failed to initialize the...<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">debug</span>(<span class="pl-s"><span class="pl-pds">"</span>something Happened!<span class="pl-pds">"</span></span>);
+</pre></div>
+
+<p>The log file will look like this</p>
+
+<pre><code>28-04-2016 20:16:45.5 [WARNING] something is wrong
+28-04-2016 20:16:45.5 [ERROR] Failed to initialize the...
+28-04-2016 20:16:45.5 [DEBUG] something Happened!
+28-04-2016 20:17:06.6 [ERROR] telnet socket closed
+</code></pre>
+
+<h4>
+<a id="with-custom-options" class="anchor" href="#with-custom-options" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>With custom options</h4>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> logParams <span class="pl-k">=</span> {
+    consoleOutput <span class="pl-k">:</span> <span class="pl-c1">true</span>,
+    consoleOutputLevel<span class="pl-k">:</span> [<span class="pl-s"><span class="pl-pds">'</span>DEBUG<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>ERROR<span class="pl-pds">'</span></span>,<span class="pl-s"><span class="pl-pds">'</span>WARNING<span class="pl-pds">'</span></span>],
+
+    dateTimeFormat<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>DD-MM-YYYY HH:mm:ss.S<span class="pl-pds">"</span></span>,
+    outputPath<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>logs/<span class="pl-pds">"</span></span>,
+    fileNameDateFormat<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>DDMMYYYY<span class="pl-pds">"</span></span>,
+    fileNamePrefix<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>myApp-<span class="pl-pds">"</span></span>
+};
+
+<span class="pl-k">var</span> log <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>noogger<span class="pl-pds">'</span></span>).<span class="pl-en">init</span>(logParams);
+</pre></div>
+
+<p>or</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> log <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>noogger<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> logParams <span class="pl-k">=</span> {
+    consoleOutput <span class="pl-k">:</span> <span class="pl-c1">true</span>,
+    consoleOutputLevel<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">'</span>DEBUG<span class="pl-pds">'</span></span>,
+
+    dateTimeFormat<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>DD-MM-YYYY HH:mm:ss<span class="pl-pds">"</span></span>,
+    fileNameDateFormat<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>YYYY-MM-DD<span class="pl-pds">"</span></span>,
+    fileNamePrefix<span class="pl-k">:</span><span class="pl-s"><span class="pl-pds">"</span>myApp-<span class="pl-pds">"</span></span>,
+    outputPath<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>myLogs/<span class="pl-pds">"</span></span>
+};
+
+
+<span class="pl-smi">log</span>.<span class="pl-en">init</span>(logParams);</pre></div>
+
+<h2>
+<a id="default-parameters" class="anchor" href="#default-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Default Parameters:</h2>
+
+<pre><code>    consoleOutput : false,
+    consoleOutputLevel: 'DEBUG',
+    dateTimeFormat: "DD-MM-YYYY HH:mm:ss.S",
+    outputPath: "logs/",
+    fileNameDateFormat: "DDMMYYYY",
+    fileNamePrefix:"",
+    fileNameSuffix:""
+</code></pre>
+
+<h2>
+<a id="parameters" class="anchor" href="#parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters:</h2>
+
+<ul>
+<li>  <code>consoleOutput</code> : <code>boolean</code> : Wether the logging will be printed on the console output as well, or not</li>
+<li>  <code>consoleOutputLevel</code> : <code>int</code> or <code>string</code> or <code>array</code>  : Filters what is printed to the console with respect to log levels (specify the console output log level).</li>
+<li>  using int: from 0 to 7 </li>
+<li>  using string: any valid log level (DEBUG, INFO, ERROR,....)</li>
+<li>  using array: to allow multiple log levels eg: ['DEBUG','ERROR','WARNING']</li>
+<li>  <code>dateTimeFormat</code> : <code>string</code> : specifies the Date and time format to be used inside log file for each record.
+                         refer to the date format section.</li>
+<li>  <code>outputPath</code> : <code>string</code> : define the location where the log files  will be written</li>
+<li>  <code>fileNameDateFormat</code>: <code>string</code> : the date format to be used in the log files name to differentiate them (per day); 
+                           you can alter this, so that it will write one file per week or month or whatever you want,
+                           refer to the date format section.</li>
+<li>  <code>fileNamePrefix</code>: <code>string</code> : Prepends the given string to every log file name.</li>
+<li>  <code>fileNameSuffix</code>: <code>string</code> : Appends the given string to every log file name.</li>
+</ul>
+
+<h2>
+<a id="date-and-time-formatting" class="anchor" href="#date-and-time-formatting" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Date and Time formatting</h2>
+
+<p>The formating is based on the moment.js library, since it is the one used.
+So please refer to <a href="http://momentjs.com/docs/#/displaying/format/">this page</a>.</p>
+
+<p>Submit any issue or request to <a href="https://github.com/Xsmael/node-logger/issues">github page</a>.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Node-logger maintained by <a href="https://github.com/Xsmael">Xsmael</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
