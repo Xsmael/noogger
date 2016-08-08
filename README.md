@@ -3,11 +3,11 @@
 [![NPM](https://nodei.co/npm/noogger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/noogger/)
 
 
-# node-logger (noogger)
+#  Noogger (Node-logger)
 
 A simple logging module for node.js
 
-`noogger` is a simple to use logger module that helps you to write logs files in a clean an organized way.
+`Noogger` is a simple to use logger module that helps you to write logs files in a clean an organized way.
 No need to implement the logging mechanism for your node applications anymore.
 
 
