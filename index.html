@@ -16,14 +16,14 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Xsmael/node-logger">View on GitHub</a>
+          <a id="forkme_banner" href="https://github.com/Xsmael/Noogger">View on GitHub</a>
 
           <h1 id="project_title">Node-logger</h1>
           <h2 id="project_tagline">A simple and lightweight nodejs logging library.</h2>
 
             <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Xsmael/node-logger/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Xsmael/node-logger/tarball/master">Download this project as a tar.gz file</a>
+              <a class="zip_download_link" href="https://github.com/Xsmael/Noogger/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/Xsmael/Noogger/tarball/master">Download this project as a tar.gz file</a>
             </section>
         </header>
     </div>
@@ -36,11 +36,14 @@
 <p><a href="https://nodei.co/npm/noogger/"><img src="https://nodei.co/npm/noogger.png?downloads=true&amp;downloadRank=true&amp;stars=true" alt="NPM"></a></p>
 
 <h1>
-<a id="node-logger-noogger" class="anchor" href="#node-logger-noogger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>node-logger (noogger)</h1>
+<a id="noogger-node-logger" class="anchor" href="#noogger-node-logger" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Noogger (Node-logger)</h1>
 
 <p>A simple logging module for node.js</p>
 
-<p><code>noogger</code> is a simple to use logger module that helps you to write logs files in a clean an organized way.
+<p><a href="https://travis-ci.org/websockets/ws"><img src="https://travis-ci.org/websockets/ws.svg?branch=master" alt="Build Status"></a></p>
+
+<p><code>Noogger</code> is a simple featured logger module that helps you displaying logs to the console with log levels and pretty colors
+ as well as writing logs files in a clean an organized way.
 No need to implement the logging mechanism for your node applications anymore.</p>
 
 <h3>
@@ -57,8 +60,9 @@ npm install -g noogger
 
 <ul>
 <li> write daily log file, handy for servers, or applications that run continously</li>
-<li> Forwards logging data to the console output if needed (optional)</li>
-<li> En/Disable Console output according to log</li>
+<li> Forwards(prints) logging data to the console output if needed (optional)</li>
+<li> En/Disable Console output with respect to log levels </li>
+<li> En/Disable File output with respect to log levels </li>
 <li> pretty colors in console output</li>
 <li> Supported log levels (as per cisco and many other manufacturer standards):
 EMERGENCY(0)
@@ -81,10 +85,13 @@ DEBUG(7)</li>
 <div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> log <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>noogger<span class="pl-pds">'</span></span>);
 <span class="pl-k">...</span>
 <span class="pl-k">...</span>
-<span class="pl-k">...</span>
-<span class="pl-smi">log</span>.<span class="pl-en">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World! Booting..<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">emergency</span>(<span class="pl-s"><span class="pl-pds">"</span>This is an EMERGENCY!!! THE WORLD IS COLLAPSING<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-c1">alert</span>(<span class="pl-s"><span class="pl-pds">"</span>OMGGGG!<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">critical</span>(<span class="pl-s"><span class="pl-pds">"</span>This is getting critical!<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">error</span>(<span class="pl-s"><span class="pl-pds">"</span>Erro 0x04512 Failed to initialize the initialization module<span class="pl-pds">"</span></span>);
 <span class="pl-smi">log</span>.<span class="pl-en">warning</span>(<span class="pl-s"><span class="pl-pds">"</span>something is wrong<span class="pl-pds">"</span></span>);
-<span class="pl-smi">log</span>.<span class="pl-en">error</span>(<span class="pl-s"><span class="pl-pds">"</span>Failed to initialize the...<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">notice</span>(<span class="pl-s"><span class="pl-pds">"</span>Hey! have you noticed This?!<span class="pl-pds">"</span></span>);
+<span class="pl-smi">log</span>.<span class="pl-en">info</span>(<span class="pl-s"><span class="pl-pds">"</span>Hello World! Booting..<span class="pl-pds">"</span></span>);
 <span class="pl-smi">log</span>.<span class="pl-en">debug</span>(<span class="pl-s"><span class="pl-pds">"</span>something Happened!<span class="pl-pds">"</span></span>);
 </pre></div>
 
@@ -132,32 +139,41 @@ DEBUG(7)</li>
 <h2>
 <a id="default-parameters" class="anchor" href="#default-parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Default Parameters:</h2>
 
-<pre><code>    consoleOutput : false,
-    consoleOutputLevel: 'DEBUG',
-    dateTimeFormat: "DD-MM-YYYY HH:mm:ss.S",
+<pre><code>    consoleOutput : true,
+    consoleOutputLevel: 7, 
+
+    fileOutput: true,
+    fileOutputLevel: 7, 
+
     outputPath: "logs/",
     fileNameDateFormat: "DDMMYYYY",
+    dateTimeFormat: "DD-MM-YYYY HH:mm:ss.S",
+
     fileNamePrefix:"",
-    fileNameSuffix:""
+    fileNameSuffix:"",
+    customIntro: null
 </code></pre>
 
 <h2>
 <a id="parameters" class="anchor" href="#parameters" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Parameters:</h2>
 
 <ul>
-<li>  <code>consoleOutput</code> : <code>boolean</code> : Wether the logging will be printed on the console output as well, or not</li>
-<li>  <code>consoleOutputLevel</code> : <code>int</code> or <code>string</code> or <code>array</code>  : Filters what is printed to the console with respect to log levels (specify the console output log level).</li>
-<li>  using int: from 0 to 7 </li>
-<li>  using string: any valid log level (DEBUG, INFO, ERROR,....)</li>
-<li>  using array: to allow multiple log levels eg: ['DEBUG','ERROR','WARNING']</li>
+<li>  <code>consoleOutput</code> : <code>boolean</code> : Wether the logs should be printed on the console output as well, or not</li>
+<li>  <code>consoleOutputLevel</code> : <code>int</code> or <code>string</code> or <code>array</code>  : Filters what is printed to the console with respect to log levels (specify the console output log level).
+using int: from 0 to 7 
+using string: any valid log level (DEBUG, INFO, ERROR,....)
+using array: to allow to select multiple log levels without the constraint of order  eg: ['DEBUG','ERROR','WARNING']</li>
+<li>  <code>fileOutput</code> : <code>boolean</code> : Wether the logs should be written to files or not</li>
+<li>  <code>consoleOutputLevel</code> : <code>int</code> or <code>string</code> or <code>array</code>  : Filters what is written to log files with respect to log levels (works the same as consoleOutputLevel).</li>
+<li>  <code>outputPath</code> : <code>string</code> : define the location where the log files  will be written</li>
 <li>  <code>dateTimeFormat</code> : <code>string</code> : specifies the Date and time format to be used inside log file for each record.
                          refer to the date format section.</li>
-<li>  <code>outputPath</code> : <code>string</code> : define the location where the log files  will be written</li>
 <li>  <code>fileNameDateFormat</code>: <code>string</code> : the date format to be used in the log files name to differentiate them (per day); 
                            you can alter this, so that it will write one file per week or month or whatever you want,
                            refer to the date format section.</li>
 <li>  <code>fileNamePrefix</code>: <code>string</code> : Prepends the given string to every log file name.</li>
 <li>  <code>fileNameSuffix</code>: <code>string</code> : Appends the given string to every log file name.</li>
+<li>  <code>customIntro</code>: <code>function</code> or <code>boolean</code> : Just. try it by stting it to true :) or supply your own function to be called when your application starts(at least at the point where you initialize noogger)</li>
 </ul>
 
 <h2>
@@ -166,7 +182,7 @@ DEBUG(7)</li>
 <p>The formating is based on the moment.js library, since it is the one used.
 So please refer to <a href="http://momentjs.com/docs/#/displaying/format/">this page</a>.</p>
 
-<p>Submit any issue or request to <a href="https://github.com/Xsmael/node-logger/issues">github page</a>.</p>
+<p>Submit any issue or request to the <a href="https://github.com/Xsmael/node-logger/issues">github page</a>.</p>
       </section>
     </div>
 
