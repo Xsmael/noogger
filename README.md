@@ -1,6 +1,6 @@
 [![GitHub license](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/mkozjak/node-telnet-client/blob/master/LICENSE)
 
-[![NPM](https://nodei.co/npm/node-logger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/telnet-client/)
+[![NPM](https://nodei.co/npm/noogger.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/noogger/)
 
 
 # node-logger (noogger)
