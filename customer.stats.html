@@ -1,0 +1,28 @@
+
+        <div  style="margin-top: 10px;" class="customer-stats row">
+            <div class="col-md-12"  ng-repeat="cpe in cpes ">
+                <div class="btn-group btn-group-justified" role="group" aria-label="Basic example">
+                    <span type="button" class="well btn btn-default">
+                    <span class="glyphicon glyphicon-scale"></span> CPE[{{cpe.label}}]
+                    </span>
+                    <span type="button" class="well btn btn-default">{{cpe.debit_type}}</span>
+                    <span type="button" class="well btn btn-default"> Débit:
+                        <span class="glyphicon glyphicon-arrow-up"></span> {{cpe.debit_up}}
+                        <span class="glyphicon glyphicon-arrow-down"></span> {{cpe.debit_down}}
+                    </span>
+                    <span type="button" class="well btn btn-default">{{cpe.vlan}}</span>
+                    <span type="button" class="well btn btn-default">MAC: {{cpe.mac}}</span>
+                    <span type="button" class="well btn btn-default">MGMT: <a href="http://192.168.30.1/" target="_blank">192.168.30.1</a></span>
+                    <span type="button" class="well btn btn-default" ng-click="showGraph= !showGraph;iframeSrc=graphUrl(cpe.id) " >
+                        <span class="glyphicon glyphicon-triangle-bottom"></span>
+                    </span>
+                </div>
+                <div class="panel panel-default" ng-show="showGraph">
+                    <div class="panel-body">
+                        <div class="embed-responsive embed-responsive-16by9" style=" padding-bottom: 330px; ">
+                            <iframe class="embed-responsive-item" ng-src="{{iframeSrc| trustedUrl}}" ></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>

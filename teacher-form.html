@@ -1,0 +1,19 @@
+<form ng-controller="TeacherController">
+    <div class="form-group">
+        <input class="form-control" placeholder="Nom" ng-model="teacher.name" />
+    </div>
+    <div class="form-group">
+        <input class="form-control" placeholder="Téléphone" ng-model="teacher.phone" />
+    </div>
+    
+    <div class="form-group">
+        <input class="form-control" placeholder="Email" ng-model="teacher.email" />
+    </div>
+
+    
+    <div class="btn-group btn-group-justified" role="group" aria-label="Justified button group">
+        <a data-bb-handler="cancel" class="btn btn-danger" role="button" data-dismiss="modal">Annuler</a>
+        <a data-bb-handler="confirm" class="btn btn-default" role="button" data-dismiss="modal" ng-click="createTeacher(teacher)">Créer</a>
+    </div>
+</form>
+

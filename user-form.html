@@ -1,0 +1,32 @@
+<form ng-controller="UserController">
+    <div class="form-group">
+        <input class="form-control" placeholder="Nom" ng-model="user.name" />
+    </div>
+    <div class="form-group">
+        <input class="form-control" placeholder="Téléphone" ng-model="user.phone" />
+    </div>
+    <div class="form-group">
+        <input class="form-control" placeholder="Whatsapp"  ng-model="user.whatsapp" />
+    </div>
+    <div class="form-group">
+        <input class="form-control" placeholder="Email" ng-model="user.email" />
+    </div>
+    <div class="form-group">
+        <input class="form-control" placeholder="Skype ID" ng-model="user.skype" />
+    </div>
+
+    <div class="form-group">
+        <select class="form-control"  ng-model="user.ole">
+            <option value="" disabled selected>Role</option>
+            <option value="ADMIN">Admin</option>
+            <option value="MANAGER">Manager</option>
+            <option value="OBSERVER">Superviser</option>
+        </select>
+    </div>
+    
+    <div class="btn-group btn-group-justified" role="group" aria-label="Justified button group">
+        <a data-bb-handler="cancel" class="btn btn-danger" role="button" data-dismiss="modal">Annuler</a>
+        <a data-bb-handler="confirm" class="btn btn-default" role="button" data-dismiss="modal" ng-click="createuUser(user)">Créer</a>
+    </div>
+</form>
+
