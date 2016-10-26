@@ -22,6 +22,8 @@ npm install noogger
 npm install -g noogger
 ```
 
+Please download from npm to get the latest stable version.
+
 ## Features
 
 -  write daily log file, handy for servers, or applications that run continously
