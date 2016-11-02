@@ -141,6 +141,17 @@ function debug(data, consoleOut) {
 }
 
 
+var myLogger = function (req, res, next) {
+	
+	req.originalUrl
+  if(req.fresh)
+  else {
+
+  }
+
+  next();
+};
+
 exports.init = init;
 
 exports.emergency = emergency;
