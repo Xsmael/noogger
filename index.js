@@ -1,18 +1,33 @@
 /** todo
- * Support for js Object and Arrays
- *  En/Disabling Console output according to logLevels
- *  option to separate log files per logLevels
+ *
+ *  En/Disabling Console output according to intLogLevel - Done!
+ *  En/Disabling writing to file according to intLogLevel - Done!
+ * intro/ customIntro function - Done !
+ *  0.1.4
+ * 
+ *  auto JSON.stringifying object, for your conveninience
+ *  make it more developer-friendly  by avoiding the dot notation eg: log() instead of log.debug()
  *  Add events such as on<logLevel>
- *  enable logging per module (-)--77
+ *  option to separate log files per intLogLevel
+ *  0.1.6
+ * --------------------------------- 
+ *  Support for js Object and Arrays
+ *  organize log levels in folders of months and years - optional
+ *  feature for archives, and zipping old logs 
+ *  0.1.7
+ *  
+ *
  * 
- * 
+ * add more log levels trace, fatal
+ *  send email alerts
+ * Allows for multiple configurable destination streams. For example, you might be writing trace logs to one file but when an error is encountered, write to the same file, then into error file and send an email at the same time.
+ * 0.1.6
  * 
 */
 var fs  = require('fs');
 var now = require('moment');
 var chalk =  require('chalk');
 
-var  c_fatal =  chalk.red.bold;
 var  c_emergency = chalk.bold.red;
 var  c_alert =  chalk.red;
 var  c_critical =  chalk.bgRed.black;
@@ -24,17 +39,34 @@ var  c_debug =  chalk.green;
 var  c_date = chalk.dim;
 var  c_logLevel= chalk.inverse;
 
+var intLogLevel = [];
+	intLogLevel['EMERGENCY']= 0;
+	intLogLevel['ALERT']    = 1;	
+	intLogLevel['CRITICAL'] = 2;
+	intLogLevel['ERROR']    = 3;
+	intLogLevel['WARNING']  = 4;
+	intLogLevel['NOTICE']   = 5;
+	intLogLevel['INFO']     = 6;
+	intLogLevel['DEBUG']    = 7;
 
 var self =this;
 var initialized =false;
 
 var opts = {
 	consoleOutput : true,
-	dateTimeFormat: "DD-MM-YYYY HH:mm:ss.S",
+	consoleOutputLevel: 7, //or 7 or ['DEBUG','TRACE'],
+	
+	fileOutput: true,
+	fileOutputLevel: 7, // ['DEBUG','TRACE'],
+	
 	outputPath: "logs/",
+	dateTimeFormat: "DD-MM-YYYY HH:mm:ss.S",
 	fileNameDateFormat: "DDMMYYYY",
+	
 	fileNamePrefix:"",
-	fileNameSuffix:""
+	fileNameSuffix:"",
+	verbose:true,
+	customIntro: true
 };
 
 
@@ -63,95 +95,243 @@ String.prototype.rightJustify = function( length, char ) {
     }
     return this + fill.join('');
 }
+
+
+function dfault( defArg, defVal){ /*  to enable default parameters in functions */
+	return ( typeof defArg !== 'undefined' ? defArg : defVal) ;
+}
+
+function isset(obj){
+    return (typeof obj !=='undefined' ? true : false);
+}
+function introduce(package) {
+	
+	//console.log("********************************");
+	console.log("***************"+package.name+"***************");
+	console.log("version:                   "+package.version);
+	console.log("Console output:            "+(opts.consoleOutput ? "enabled" : "disabled") );
+	if(opts.consoleOutput) console.log("Console output logLevel:   " + opts.consoleOutputLevel);
+	console.log("File output:               "+(opts.fileOutput ? "enabled" : "disabled") );
+	if(opts.fileOutput) console.log("File output logLevel:      " + opts.fileOutputLevel);
+	console.log("Writing logs file to:      "+opts.outputPath);
+	console.log("*************************************");
+	console.log("by "+package.author);
+	console.log("\n");
+	//console.log("*************************************");
+}
+
 /* Misc Functions ***/
 
-
 function init(o){
-	opts.outputPath = ( typeof o.outputPath !== 'undefined' ?  o.outputPath : opts.outputPath  );
-	opts.consoleOutput = ( typeof o.consoleOutput !== 'undefined' ?  o.consoleOutput : true );
-	opts.dateTimeFormat = ( typeof o.dateTimeFormat !== 'undefined' ?  o.dateTimeFormat : opts.dateTimeFormat );
-	opts.fileNamePrefix = ( typeof o.fileNamePrefix !== 'undefined' ?  o.fileNamePrefix : opts.fileNamePrefix  );
-	opts.fileNameSuffix = ( typeof o.fileNameSuffix !== 'undefined' ?  o.fileNameSuffix : opts.fileNameSuffix  );
-	opts.fileNameDateFormat = ( typeof o.fileNameDateFormat !== 'undefined' ?  o.fileNameDateFormat : opts.fileNameDateFormat  );
+	
+	opts.outputPath = dfault( o.outputPath, opts.outputPath );
+
+	opts.consoleOutput = dfault(o.consoleOutput, opts.consoleOutput );
+	opts.consoleOutputLevel = dfault(o.consoleOutputLevel, opts.consoleOutputLevel );
+	
+	opts.fileOutput = dfault(o.fileOutput, opts.fileOutput);
+	opts.fileOutputLevel= dfault(o.fileOutputLevel, opts.fileOutputLevel);
+	
+	opts.dateTimeFormat = dfault(o.dateTimeFormat, opts.dateTimeFormat );
+	opts.fileNamePrefix = dfault(o.fileNamePrefix, opts.fileNamePrefix );
+	opts.fileNameSuffix = dfault(o.fileNameSuffix, opts.fileNameSuffix );
+	opts.fileNameDateFormat = dfault(o.fileNameDateFormat, opts.fileNameDateFormat  );
+	
+	opts.verbose = dfault(o.verbose, opts.verbose ); // verbose option is currently useless
+	opts.customIntro = dfault(o.customIntro, opts.customIntro );
+	
+	if(typeof opts.customIntro ==='function') 
+		opts.customIntro(require('../../package.json')); 
+	else if(opts.customIntro != null &&  opts.customIntro != false)
+		introduce(require('../../package.json'));
+
+	opts.filename = opts.outputPath + opts.fileNamePrefix + now().format(opts.fileNameDateFormat) + opts.fileNameSuffix +".log";
+
+	whenTheDayEnds(); /** recursive function that calls itself on each new day, use it for your conveninience */
 	
     mkdirSync(opts.outputPath);
 	initialized =true;
 	return self;
 }
 
-function logIt(txt,logLevel, consoleOut){
-	
+function whenTheDayEnds() {
+	/* Run the following after the day ends (new day) */
+	opts.filename = opts.outputPath + opts.fileNamePrefix + now().format(opts.fileNameDateFormat) + opts.fileNameSuffix +".log";
+
+    /* scheduling for next day */
+	var timeLeft= moment().endOf('day').diff(moment());
+	setTimeout(whenTheDayEnds(), timeLeft);
+}
+
+function logIt(txt, logLevel, consoleOut, fileOut){		
 	if(!initialized) init(opts);
+
+	var out = dfault(consoleOut , opts.consoleOutput);
 	
-	var filename = opts.fileNamePrefix + now().format(opts.fileNameDateFormat) + opts.fileNameSuffix +".log";
 	var logLine= now().format(opts.dateTimeFormat)+" ["+logLevel+"] "+txt+"\r\n";
 
-	var out = typeof consoleOut !=='undefined' ? consoleOut : opts.consoleOutput;
 	if(out) 
 	{
-		var cout = c_date( now().format(opts.dateTimeFormat) )
+		var c_logLine = c_date( now().format(opts.dateTimeFormat) )
 	         + ' '+c_logLevel('['+logLevel.rightJustify(9,' ')+']')
 			 + '  '+txt;
+
+		//styling with colors
 		switch (logLevel) {
-			case 'FATAL': 	  cout= c_fatal(cout);	break;
-			case 'EMERGENCY': cout= c_emergency(cout);	break;
-			case 'ALERT':	  cout= c_alert(cout);	break;
-			case 'CRITICAL':  cout= c_critical(cout);	break;
-			case 'ERROR': 	  cout= c_error(cout);	break;
-			case 'WARNING':   cout= c_warning(cout);	break;
-			case 'NOTICE': 	  cout= c_notice(cout);	break;
-			case 'INFO': 	  cout= c_info(cout);	break;
-			case 'DEBUG': 	  cout= c_debug(cout);	break;
+			case 'EMERGENCY': c_logLine= c_emergency(c_logLine);	break;
+			case 'ALERT':	  c_logLine= c_alert(c_logLine);	break;
+			case 'CRITICAL':  c_logLine= c_critical(c_logLine);	break;
+			case 'ERROR': 	  c_logLine= c_error(c_logLine);	break;
+			case 'WARNING':   c_logLine= c_warning(c_logLine);	break;
+			case 'NOTICE': 	  c_logLine= c_notice(c_logLine);	break;
+			case 'INFO': 	  c_logLine= c_info(c_logLine);	break;
+			case 'DEBUG': 	  c_logLine= c_debug(c_logLine);	break;
 		}
-		console.log(cout);
+		
+		controlledConsoleOutput(c_logLine, logLevel, consoleOut);	
 	}		
 	
-	var path= opts.outputPath+filename;
-	fs.appendFile(path, logLine, function(err) {
-		if (err) throw err;	
+	if(dfault(fileOut , opts.fileOutput))
+		controlledFileOutput(logLine, logLevel, fileOut);
+}
+
+function controlledConsoleOutput(logMsg, logLevel, consoleOut) {
+	
+	controlledOutput(logMsg, logLevel, opts.consoleOutputLevel, consoleOut, function(log) {
+		console.log(log); 
 	});
 }
 
-function fatal(data, consoleOut) {
-	logIt(data,"FATAL", consoleOut);
-}
-function emergency(data, consoleOut) {
-	logIt(data,"EMERGENCY", consoleOut);
-}
-function alert(data, consoleOut) {
-	logIt(data,"ALERT", consoleOut);
-}
-function critical(data, consoleOut) {
-	logIt(data,"CRITICAL", consoleOut);
-}
-function error(data, consoleOut) {
-	logIt(data,"ERROR", consoleOut);
-}
-function warning(data, consoleOut) {
-	logIt(data,"WARNING", consoleOut);
-}
-function notice(data, consoleOut) {
-	logIt(data,"NOTICE", consoleOut);
-}
-function info(data, consoleOut) {
-	logIt(data,"INFO", consoleOut);
-}
-function debug(data, consoleOut) {
-	logIt(data,"DEBUG", consoleOut);
-}
-
-
-var myLogger = function (req, res, next) {
+function controlledFileOutput(logMsg, logLevel, fileOut) {
 	
-	req.originalUrl
-  if(req.fresh)
-  else {
+	controlledOutput(logMsg, logLevel, opts.fileOutputLevel, fileOut, function(log) {
 
-  }
+		fs.appendFile(opts.filename, log, function(err) {
+			if (err) throw err;
+		});
+	});
+}
 
-  next();
-};
+function controlledOutput(logMsg, logLevel, outputLevel, isOut, getOut) {  //getOut is a callback
+	if(typeof outputLevel == 'string' )
+				var maxLevel =intLogLevel[outputLevel] ;
+		
+		switch(typeof outputLevel) {
+			
+			case 'number': maxLevel = outputLevel;
+			case 'string': 
+				if( intLogLevel[logLevel] <= maxLevel) // if current level is allowed to be printed
+				{
+					if(isset(isOut)) //in case this optional argument is specified
+					{
+						if(isOut)    //if true  then 'out' it
+							getOut(logMsg)
+					}
+					else //in case the optional argument is not specified but "current level is ALLOWED to be printed"
+						getOut(logMsg);
+				}
+				else if(isset(isOut)) //if current level is NOT allowed to be printed, BUT the optional arg is specified
+				{
+					if(isOut) // if is true then 'out' it 
+						getOut(logMsg);
+				}
+			break;		
+			
+			default: //Array, coz typeof an array usually gives 'object' check this....
+			
+				/*Here the same pattern as above is used... it works like  a kind of truth table */
+				if( outputLevel.indexOf(logLevel) > -1)
+				{
+					if(isset(isOut)) 
+					{
+						if(isOut)
+							getOut(logMsg);
+					}
+					else
+						getOut(logMsg);
+				}
+				else if(isset(isOut)) 
+				{
+					if(isOut)
+						getOut(logMsg);
+				}
+			break;
+			
+		}
+}
 
+function emergency(data, consoleOut, fileOut) {
+	logIt(data,"EMERGENCY", consoleOut, fileOut);
+}
+function alert(data, consoleOut, fileOut) {
+	logIt(data,"ALERT", consoleOut, fileOut);
+}
+function critical(data, consoleOut, fileOut) {
+	logIt(data,"CRITICAL", consoleOut, fileOut);
+}
+function error(data, consoleOut, fileOut) {
+	logIt(data,"ERROR", consoleOut, fileOut);
+}
+function warning(data, consoleOut, fileOut) {
+	logIt(data,"WARNING", consoleOut, fileOut);
+}
+function notice(data, consoleOut, fileOut) {
+	logIt(data,"NOTICE", consoleOut, fileOut);
+}
+function info(data, consoleOut, fileOut) {
+	logIt(data,"INFO", consoleOut, fileOut);
+}
+function debug(data, consoleOut, fileOut) {
+	logIt(data,"DEBUG", consoleOut, fileOut);
+}
+
+/**Express middleware 
+//http://expressjs.com/en/api.html#req
+//https://expressjs.com/en/guide/writing-middleware.html
+
+var middleware= function(req,res,next) {
+
+	var method = req.method;
+	var text= req.originalUrl;
+	if(req.secure) {} //  if we use https; put spec color
+	logIt(text,method,true,true);
+}
+
+**/
+
+if(0)
+{
+	var f=false,
+		t=true;
+
+debug("Debugging haha hehe वाचाल",t,t);
+debug(' This is a debug message to help you figure out whats going on',f,t);
+
+info('Just to inform you, everything is okay! no probs today',f);
+info(' The processus has started successfully!',t);
+
+notice('OMG! have you noticed what just happened ? ');
+notice('This is a super notificaiton ? ');
+
+warning(' Hum another thing went wrong...',f);
+warning('Something went wrong...',t);
+
+error('General Failure');
+error('Error ooccurred while doing thus...');
+
+critical('This is a critical messsage and require your whole attetion!',t);
+critical('OMG! have you noticed what just happened ? ');
+
+alert('FATAL ERROR!',f,f);
+alert('DAMN FATAL ERROR!',t,t);
+
+emergency('the system is going down!');
+emergency('There is an emergency! ');
+}
+
+/**
+https://en.wikipedia.org/wiki/Syslog#Severity_level
+**/
 exports.init = init;
 
 exports.emergency = emergency;
@@ -162,10 +342,6 @@ exports.warning = warning;
 exports.notice = notice;
 exports.info = info;
 exports.debug = debug;
-exports.fatal = fatal;
-
-
-
 
 /**
  * 
@@ -185,3 +361,4 @@ src https://en.wikipedia.org/wiki/Syslog
 
 
 /** http://momentjs.com/docs/#/displaying/ for date formats */
+
