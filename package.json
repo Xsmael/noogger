@@ -1,14 +1,8 @@
 {
   "name": "noogger",
-  "version": "0.1.2",
-  "description": "Writes log files for node modules/applications",
+  "version": "0.1.8",
+  "description": "Writes log files for nodejs modules/applications",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Xsmael/node-logger.git"
@@ -20,8 +14,6 @@
     "write",
     "logger",
     "logging",
-    "node",
-    "application",
     "console",
     "info",
     "debug",

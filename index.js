@@ -5,18 +5,18 @@
  * intro/ customIntro function - Done !
  *  0.1.4
  * 
- *  auto JSON.stringifying object, for your conveninience
- *  make it more developer-friendly  by avoiding the dot notation eg: log() instead of log.debug()
- *  Add events such as on<logLevel>
+ *  Bug gix
  *  option to separate log files per intLogLevel
  *  0.1.6
  * --------------------------------- 
- *  Support for js Object and Arrays
+ *  Support for  Arrays truncate if too big
+ * auto JSON.stringifying object, for your conveninience Done !
  *  organize log levels in folders of months and years - optional
- *  feature for archives, and zipping old logs 
+ * Add events such as on<logLevel>
  *  0.1.7
- *  
- *
+ * 
+ *  make it more developer-friendly  by avoiding the dot notation eg: log() instead of log.debug()
+ *  feature for archives, and zipping old logs 
  * 
  * add more log levels trace, fatal
  *  send email alerts
@@ -96,6 +96,21 @@ String.prototype.rightJustify = function( length, char ) {
     return this + fill.join('');
 }
 
+String.prototype.centerJustify = function( length, char ) {
+    var i=0;
+	var str= this;
+	var toggle= true;
+    while ( i + this.length < length ) {
+      i++;
+	  if(toggle)
+	  	str = str+ char;
+	  else
+	  	str = char+str;
+	  toggle = !toggle;
+    }
+    return str;
+}
+
 
 function dfault( defArg, defVal){ /*  to enable default parameters in functions */
 	return ( typeof defArg !== 'undefined' ? defArg : defVal) ;
@@ -142,8 +157,8 @@ function init(o){
 	
 	if(typeof opts.customIntro ==='function') 
 		opts.customIntro(require('../../package.json')); 
-	else if(opts.customIntro != null &&  opts.customIntro != false)
-		introduce(require('../../package.json'));
+	else if(opts.customIntro != null &&  opts.customIntro != false);
+		//introduce(require('../../package.json'));
 
 	opts.filename = opts.outputPath + opts.fileNamePrefix + now().format(opts.fileNameDateFormat) + opts.fileNameSuffix +".log";
 
@@ -159,21 +174,23 @@ function whenTheDayEnds() {
 	opts.filename = opts.outputPath + opts.fileNamePrefix + now().format(opts.fileNameDateFormat) + opts.fileNameSuffix +".log";
 
     /* scheduling for next day */
-	var timeLeft= moment().endOf('day').diff(moment());
-	setTimeout(whenTheDayEnds(), timeLeft);
+	var timeLeft= now().endOf('day').diff(now());
+	setTimeout(function(){
+		whenTheDayEnds();
+	}, timeLeft);
 }
 
-function logIt(txt, logLevel, consoleOut, fileOut){		
+function logIt(data, logLevel, consoleOut, fileOut){		
 	if(!initialized) init(opts);
 
 	var out = dfault(consoleOut , opts.consoleOutput);
-	
+	var txt= (typeof data == "object") ? "\n"+JSON.stringify(data,null,3) : data;
 	var logLine= now().format(opts.dateTimeFormat)+" ["+logLevel+"] "+txt+"\r\n";
 
 	if(out) 
 	{
 		var c_logLine = c_date( now().format(opts.dateTimeFormat) )
-	         + ' '+c_logLevel('['+logLevel.rightJustify(9,' ')+']')
+	         + ' '+c_logLevel('['+logLevel.centerJustify(9,' ')+']')
 			 + '  '+txt;
 
 		//styling with colors
@@ -311,7 +328,7 @@ info('Just to inform you, everything is okay! no probs today',f);
 info(' The processus has started successfully!',t);
 
 notice('OMG! have you noticed what just happened ? ');
-notice('This is a super notificaiton ? ');
+notice(opts);
 
 warning(' Hum another thing went wrong...',f);
 warning('Something went wrong...',t);
