@@ -7,7 +7,7 @@
 
 A simple logging module for node.js
 
-
+[![npm](https://img.shields.io/npm/dt/noogger.svg?label=npm%20downloads)](https://www.npmjs.com/package/noogger)
 [![Build Status](https://travis-ci.org/websockets/ws.svg?branch=master)](https://travis-ci.org/websockets/ws)
 
 `Noogger` is a simple featured logger module that helps you displaying logs to the console with log levels and pretty colors
